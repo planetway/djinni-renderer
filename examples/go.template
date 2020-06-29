@@ -1,0 +1,24 @@
+package main
+
+{{- range $k,$v := .TypeDecls -}}
+{{- with $declType := DeclType $v.Body}}
+{{- if eq $declType "enum" }}
+
+type {{$v.Ident.Name}} int
+
+const (
+{{- range $i,$kk := EnumOptions $v.Body}}
+	{{$kk.Ident.Name}} {{ if eq $i 0 }}{{$v.Ident.Name}} = iota{{ end }}
+{{- end}}
+)
+{{- else if eq $declType "record" -}}
+
+type {{$v.Ident.Name}} struct {
+{{- range $f := RecordFields $v.Body}}
+	{{TitleCase $f.Ident.Name}} {{GoType $f.Type}}
+{{- end}}
+}
+{{- end}}
+{{- end}}
+
+{{end}}

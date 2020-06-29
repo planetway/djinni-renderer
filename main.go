@@ -78,6 +78,7 @@ func funcs() template.FuncMap {
 		},
 		"FullType": fullType,
 		"CppType":  cppType,
+		"GoType":   goType,
 		"ConstString": func(cnst ast.Const) string {
 			if cnst.Type.Ident.Name == "string" {
 				return fmt.Sprintf(`"%s"`, cnst.Value.(string))
@@ -132,6 +133,24 @@ func fullType(typeExpr ast.TypeExpr) string {
 		// generic types can be recursive, ex: optional<list<string>>
 		return fmt.Sprintf("%s<%s>", name, fullType(typeExpr.Args[0]))
 	} else {
+		return name
+	}
+}
+
+func goType(typeExpr ast.TypeExpr) string {
+	name := typeExpr.Ident.Name
+	switch name {
+	case "optional":
+		return fmt.Sprintf("*%s", goType(typeExpr.Args[0]))
+	case "i32":
+		return "int32"
+	case "i64":
+		return "int64"
+	case "date":
+		return "Time"
+	case "list":
+		return fmt.Sprintf("[]%s", goType(typeExpr.Args[0]))
+	default:
 		return name
 	}
 }
