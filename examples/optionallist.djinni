@@ -1,0 +1,18 @@
+userHistoryItemType = enum {
+  registerCompleted;
+  postCreated;
+  postLiked;
+}
+ 
+userHistoryItem = record {
+  id: i64;
+  itemType: userHistoryItemType;
+  date: date;
+  blogId: optional<string>;
+  language: optional<string>;
+}
+
+userHistoryResponse = record {
+  result: optional<list<userHistoryItem>>;
+  error: optional<error>;
+}

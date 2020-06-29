@@ -1,0 +1,21 @@
+{{- range $k,$v := .TypeDecls -}}
+{{$v.Ident.Name}} = {{DeclType $v.Body}} {
+{{- with $declType := DeclType $v.Body}}
+ {{- if eq $declType "enum"}}
+  {{- range $k := EnumOptions $v.Body}}
+  {{$k.Ident.Name}};
+  {{- end}}
+ {{- else if eq $declType "interface"}}
+  # interface not implemented
+ {{- else if eq $declType "record"}}
+  {{- range $f := RecordFields $v.Body}}
+  {{$f.Ident.Name}}: {{FullType $f.Type}};
+  {{- end}}
+  {{- range $c := RecordConstants $v.Body}}
+  const {{$c.Ident.Name}}: {{FullType $c.Type}} = {{ConstString $c}};
+  {{- end}}
+ {{- end}}
+{{- end}}
+}
+
+{{end}}
